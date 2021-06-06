@@ -1,0 +1,132 @@
+DROP TABLE IF EXISTS users CASCADE;
+DROP TABLE IF EXISTS reports CASCADE;
+DROP TABLE IF EXISTS descriptions CASCADE;
+DROP TABLE IF EXISTS shooting_reports CASCADE;
+DROP TABLE IF EXISTS stabbing_reports CASCADE;
+DROP TABLE IF EXISTS kidnap_reports CASCADE;
+DROP TABLE IF EXISTS accident_reports CASCADE;
+DROP TABLE IF EXISTS activities CASCADE;
+DROP TABLE IF EXISTS activity_forces CASCADE;
+DROP TABLE IF EXISTS event_types CASCADE;
+DROP TABLE IF EXISTS activity_types CASCADE;
+DROP TABLE IF EXISTS status_types CASCADE;
+
+CREATE TABLE event_types (
+	id SERIAL PRIMARY KEY,
+	event_name TEXT NOT NULL UNIQUE
+);
+
+INSERT INTO event_types (event_name)
+VALUES ('ירי');
+
+INSERT INTO event_types (event_name)
+VALUES ('דקירה');
+
+INSERT INTO event_types (event_name)
+VALUES ('חטיפה');
+
+INSERT INTO event_types (event_name)
+VALUES ('תאונה');
+
+CREATE TABLE activity_types (
+	id SERIAL PRIMARY KEY,
+	activity_name TEXT NOT NULL UNIQUE
+);
+
+INSERT INTO activity_types (activity_name)
+VALUES ('פטרול');
+
+INSERT INTO activity_types (activity_name)
+VALUES ('מארב');
+
+INSERT INTO activity_types (activity_name)
+VALUES ('מחסום רכבים');
+
+CREATE TABLE status_types (
+	id SERIAL PRIMARY KEY,
+	status_name TEXT NOT NULL UNIQUE
+);
+
+INSERT INTO status_types (status_name)
+VALUES ('מתוכנן');
+
+INSERT INTO status_types (status_name)
+VALUES ('מתרחש עכשיו');
+
+INSERT INTO status_types (status_name)
+VALUES ('הסתיים');
+
+CREATE TABLE users (
+	user_name TEXT PRIMARY KEY,
+	password TEXT NOT NULL,
+	is_admin BOOLEAN,
+	photo TEXT,
+	lat FLOAT,
+	lon FLOAT
+);
+
+CREATE TABLE descriptions(
+	description_id SERIAL PRIMARY KEY
+);
+
+CREATE TABLE reports (
+	id SERIAL PRIMARY KEY,
+	event_name TEXT NOT NULL,
+	event_type SERIAL NOT NULL REFERENCES event_types(id) ON DELETE CASCADE,
+	event_time DATE,
+	report_time DATE NOT NULL,
+	user_name TEXT  NOT NULL REFERENCES users(user_name) ON DELETE CASCADE,
+	description_id SERIAL REFERENCES descriptions(description_id) ON DELETE CASCADE,
+	lat FLOAT NOT NULL,
+	lon FLOAT NOT NULL,
+	criminal TEXT
+);
+
+CREATE TABLE stabbing_reports (
+	description_id SERIAL PRIMARY KEY REFERENCES descriptions(description_id) ON DELETE CASCADE,
+	weapon_type TEXT,
+	casualties TEXT NOT NULL
+);
+
+CREATE TABLE kidnap_reports (
+	description_id SERIAL PRIMARY KEY REFERENCES descriptions(description_id) ON DELETE CASCADE,
+	kidnapped TEXT,
+	last_place_known TEXT NOT NULL
+);
+
+CREATE TABLE shooting_reports (
+	description_id SERIAL PRIMARY KEY REFERENCES descriptions(description_id) ON DELETE CASCADE,
+	weapon_type TEXT,
+	casualties TEXT
+);
+
+CREATE TABLE accident_reports (
+	description_id SERIAL PRIMARY KEY REFERENCES descriptions(description_id) ON DELETE CASCADE,
+	casualties TEXT NOT NULL,
+	number_of_casualties INT
+);
+
+CREATE TABLE activities(
+	id SERIAL PRIMARY KEY,
+	activity_type SERIAL NOT NULL REFERENCES activity_types(id) ON DELETE CASCADE,
+	activity_time DATE,
+	activity_goal TEXT,
+	status SERIAL  NOT NULL REFERENCES status_types(id) ON DELETE CASCADE,
+	activity_approver TEXT NOT NULL REFERENCES users(user_name) ON DELETE CASCADE
+);
+
+CREATE TABLE activity_forces (
+	officer_id TEXT NOT NULL REFERENCES users(user_name) ON DELETE CASCADE,
+	activity_id SERIAL NOT NULL REFERENCES activities(id) ON DELETE CASCADE,
+	PRIMARY KEY (officer_id, activity_id)
+);
+
+INSERT INTO users (user_name, password, is_admin, lat, lon)
+VALUES ('גלי גרשטיין', 'gali123', FALSE, 39, 42);
+
+INSERT INTO descriptions
+values (1);
+
+INSERT INTO reports (event_name, event_type, event_time, report_time, user_name, description_id, lat, lon, criminal)
+VALUES ('דקירה במקדונלס', 2, TO_DATE('02-02-2003','dd-mm-yyyy'), TO_DATE('02-02-2003','dd-mm-yyyy'), 'גלי גרשטיין', 1, 54, 23, 'משה הדוקר');
+
