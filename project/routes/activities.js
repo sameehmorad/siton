@@ -6,12 +6,12 @@ const db = require('../DBFunctions/dbFunction')
 router.get('/', async function (req, res, next) {
   try {
     const query = `
-  SELECT ac.activity_name, at.activity_name AS activity_type, ac.activity_time, ac.activity_goal, st.status_name, ac.activity_approver
+  SELECT ac.id, ac.activity_name, at.activity_name AS activity_type, ac.activity_time, ac.activity_goal, st.status_name, ac.activity_approver
   FROM activities ac, status_types st, activity_types at
   WHERE st.id = ac.status
     AND at.id = ac.activity_type;`;
     let data = await db.select(query);
-    data = data.map(async (activity) => ({ ...activity, scheduledPower: await getForce() }))
+    data = data.map(async (activity) => ({ ...activity, scheduledPower: await getForce(activity.id) }))
     console.log(data);
     res.send(data);
   } catch (err) {
