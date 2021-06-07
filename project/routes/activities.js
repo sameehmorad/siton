@@ -5,12 +5,12 @@ const db = require('../DBFunctions/dbFunction')
 /* GET home page. */
 router.get('/', async function (req, res, next) {
   const query = `
-  SELECT at.activity_name, ac.activity_time, ac.activity_goal, st.status_name, ac.activity_approver
+  SELECT ac.activity_name, at.activity_name AS activity_type, ac.activity_time, ac.activity_goal, st.status_name, ac.activity_approver
   FROM activities ac, status_types st, activity_types at
   WHERE st.id = ac.status
     AND at.id = ac.activity_type;`;
-  const data = await db.select(query);
-  data.map(activity => ({ ...data, scheduledPower: getForce() }))
+  let data = await db.select(query);
+  data = data.map(activity => ({ ...activity, scheduledPower: getForce() }))
   console.log(data);
   res.send(data);
 });
@@ -22,14 +22,14 @@ const getForce = async (id) => {
 
 router.post('/', async function (req, res, next) {
   try {
-    const fields = ['activity_type', 'activity_time', 'activity_goal', 'status', 'activity_approver'];
+    const fields = ['activity_name', 'activity_type', 'activity_time', 'activity_goal', 'status', 'activity_approver'];
     const table = 'activities';
     const values = fields.reduce((object, field) => ({ ...object, [field]: req.body.activity[field] }), {});
     const id = await db.insert(values, fields, table, true);
     const force = req.body.activity.scheduledPower;
     const policemans = force.map(policeman => ({ 'officer_id': policeman, 'activity_id': id }));
     await db.insert(policemans, ['officer_id', 'activity_id'], 'activity_forces');
-    
+
     res.send();
   } catch (err) {
     console.log(err);
