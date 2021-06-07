@@ -65,10 +65,6 @@ CREATE TABLE users (
 	lon FLOAT
 );
 
-CREATE TABLE descriptions(
-	description_id SERIAL PRIMARY KEY
-);
-
 CREATE TABLE reports (
 	id SERIAL PRIMARY KEY,
 	event_name TEXT NOT NULL,
@@ -76,32 +72,31 @@ CREATE TABLE reports (
 	event_time DATE,
 	report_time DATE NOT NULL,
 	user_name TEXT  NOT NULL REFERENCES users(user_name) ON DELETE CASCADE,
-	description_id SERIAL REFERENCES descriptions(description_id) ON DELETE CASCADE,
 	lat FLOAT NOT NULL,
 	lon FLOAT NOT NULL,
 	criminal TEXT
 );
 
 CREATE TABLE stabbing_reports (
-	description_id SERIAL PRIMARY KEY REFERENCES descriptions(description_id) ON DELETE CASCADE,
+	report_id SERIAL PRIMARY KEY REFERENCES reports(id) ON DELETE CASCADE,
 	weapon_type TEXT,
 	casualties TEXT NOT NULL
 );
 
 CREATE TABLE kidnap_reports (
-	description_id SERIAL PRIMARY KEY REFERENCES descriptions(description_id) ON DELETE CASCADE,
+	report_id SERIAL PRIMARY KEY REFERENCES reports(id) ON DELETE CASCADE,
 	kidnapped TEXT,
 	last_place_known TEXT NOT NULL
 );
 
 CREATE TABLE shooting_reports (
-	description_id SERIAL PRIMARY KEY REFERENCES descriptions(description_id) ON DELETE CASCADE,
+	report_id SERIAL PRIMARY KEY REFERENCES reports(id) ON DELETE CASCADE,
 	weapon_type TEXT,
 	casualties TEXT
 );
 
 CREATE TABLE accident_reports (
-	description_id SERIAL PRIMARY KEY REFERENCES descriptions(description_id) ON DELETE CASCADE,
+	report_id SERIAL PRIMARY KEY REFERENCES reports(id) ON DELETE CASCADE,
 	casualties TEXT NOT NULL,
 	number_of_casualties INT
 );
@@ -124,9 +119,7 @@ CREATE TABLE activity_forces (
 INSERT INTO users (user_name, password, is_admin, lat, lon)
 VALUES ('גלי גרשטיין', 'gali123', FALSE, 39, 42);
 
-INSERT INTO descriptions
-values (1);
 
-INSERT INTO reports (event_name, event_type, event_time, report_time, user_name, description_id, lat, lon, criminal)
-VALUES ('דקירה במקדונלס', 2, TO_DATE('02-02-2003','dd-mm-yyyy'), TO_DATE('02-02-2003','dd-mm-yyyy'), 'גלי גרשטיין', 1, 54, 23, 'משה הדוקר');
+INSERT INTO reports (event_name, event_type, event_time, report_time, user_name, lat, lon, criminal)
+VALUES ('דקירה במקדונלס', 2, TO_DATE('02-02-2003','dd-mm-yyyy'), TO_DATE('02-02-2003','dd-mm-yyyy'), 'גלי גרשטיין', 54, 23, 'משה הדוקר');
 
