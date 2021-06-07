@@ -21,7 +21,8 @@ router.get('/', async function (req, res, next) {
 
 const getForce = async (id) => {
   const table = await db.selectWithCondition('officer_id', 'activity_id', id, 'activity_forces');
-  return table.reduce((array, policeman) => [...array, policeman['officer_id']], []);
+  console.log(table);
+  return table.reduce((array, policeman) => ([...array, policeman['officer_id']]), []);
 }
 
 router.post('/', async function (req, res, next) {
