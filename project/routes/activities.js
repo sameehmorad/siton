@@ -13,4 +13,19 @@ router.get('/', async function (req, res, next) {
   res.send(data);
 });
 
+router.post('/', async function (req, res, next) {
+  const fields = ['activity_type', 'activity_time', 'activity_goal', 'status', 'activity_approver'];
+  const table = 'activities';
+  await db.insert(req.body.activity,fields,table);
+  res.send();
+});
+
+router.get('/types', async function (req, res, next) {
+  const query = `
+SELECT id, status_name
+FROM status_types;`;
+  const data = await db.select(query);
+  res.send(data);
+});
+
 module.exports = router;
