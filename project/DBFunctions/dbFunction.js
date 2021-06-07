@@ -18,6 +18,6 @@ exports.select = select = (query) => {
             return data;
         })
         .catch(error => {
-            console.log('ERROR:', error);
+            return error;
         });
 };
