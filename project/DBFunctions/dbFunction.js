@@ -1,11 +1,11 @@
 const pgp = require('pg-promise')(/*options*/);
 
 const cn = {
-    host: '172.30.179.169', // server name or IP address;
+    host: '172.30.195.209', // server name or IP address;
     port: 5432,
-    database: 'sampledb',
-    user: 'postgres',
-    password: 'sitonteam'
+    database: 'gali',
+    user: 'gali',
+    password: 'gali'
 };
 // alternative:
 // const cn = 'postgres://postgres:sitonteam@postgresql:5432/sampledb';
