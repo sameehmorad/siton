@@ -9,6 +9,7 @@ router.get('/', async function (req, res, next) {
   FROM activities ac, status_types st
   WHERE st.id = ac.status;`;
   const data = await db.select(query);
+  console.log(data);
   res.send(data);
 });
 
