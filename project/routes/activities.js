@@ -4,19 +4,23 @@ const db = require('../DBFunctions/dbFunction')
 
 /* GET home page. */
 router.get('/', async function (req, res, next) {
-  const query = `
+  try {
+    const query = `
   SELECT ac.activity_name, at.activity_name AS activity_type, ac.activity_time, ac.activity_goal, st.status_name, ac.activity_approver
   FROM activities ac, status_types st, activity_types at
   WHERE st.id = ac.status
     AND at.id = ac.activity_type;`;
-  let data = await db.select(query);
-  data = data.map(async(activity) => ({ ...activity, scheduledPower: await getForce() }))
-  console.log(data);
-  res.send(data);
+    let data = await db.select(query);
+    data = data.map(async (activity) => ({ ...activity, scheduledPower: await getForce() }))
+    console.log(data);
+    res.send(data);
+  } catch (err) {
+    console.log(err);
+  }
 });
 
 const getForce = async (id) => {
-  const table = await db.selectWithCondition('officer_id', 'activity_id', id, activity_forces);
+  const table = await db.selectWithCondition('officer_id', 'activity_id', id, 'activity_forces');
   return table.reduce((array, policeman) => [...array, policeman['officer_id']], []);
 }
 
