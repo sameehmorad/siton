@@ -8,7 +8,7 @@ const pgp = require('pg-promise')(/*options*/);
 //     password: 'sitonteam'
 // };
 // alternative:
-const cn = 'postgres://postgres:sitonteam@172.30.179.169:5432/sampledb';
+const cn = 'postgres://postgres:sitonteam@postgresql:5432/sampledb';
 
 const db = pgp(cn);
 
