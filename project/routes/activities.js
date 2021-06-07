@@ -8,7 +8,7 @@ router.get('/', async function (req, res, next) {
   SELECT ac.activity_type, ac.activity_time, ac.activity_goal, st.status_name, ac.activity_approver
   FROM activities ac, status_types st
   WHERE st.id = ac.status;`;
-  const data = db.select(query);
+  const data = await db.select(query);
   res.send(data);
 });
 
