@@ -1,4 +1,3 @@
-const { Client } = require('pg');
 var createError = require('http-errors');
 var express = require('express');
 const cors = require('cors');
@@ -6,8 +5,9 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 
-var indexRouter = require('./routes/index');
+var activitiesRouter = require('./routes/activities');
 var usersRouter = require('./routes/users');
+const reportsRouter = require('./routes/reports');
 
 var app = express();
 
@@ -29,8 +29,10 @@ app.use(function (req, res, next) {
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use('/', indexRouter);
+app.use('/activities', activitiesRouter);
 app.use('/users', usersRouter);
+app.use('/reports', reportsRouter);
+
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
