@@ -10,7 +10,7 @@ router.get('/', async function (req, res, next) {
   WHERE st.id = ac.status
     AND at.id = ac.activity_type;`;
   let data = await db.select(query);
-  data = data.map(activity => ({ ...activity, scheduledPower: getForce() }))
+  data = data.map(async(activity) => ({ ...activity, scheduledPower: await getForce() }))
   console.log(data);
   res.send(data);
 });
