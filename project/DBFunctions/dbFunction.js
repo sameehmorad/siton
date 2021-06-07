@@ -28,8 +28,10 @@ exports.select = select = (query) => {
 exports.selectWithCondition = selectWithCondition = async (fieldToSelect, fieldToCompare, valueTocompare, table) => {
     try {
         const query = pgp.helpers.concat([
-            { query: 'SELECT $1 FROM $2 WHERE $3=$4', values: [fieldToSelect, table, fieldToCompare, valueTocompare] }]);
-        const data = await db.one(query);
+            { query: 'SELECT $1 FROM $2 WHERE $3=$4;', values: [fieldToSelect, table, fieldToCompare, valueTocompare] }]);
+            console.log(query);
+        const data = await db.many(query);
+        console.log(data);
         return data;
     } catch (err) {
         console.log(err);
