@@ -11,7 +11,11 @@ router.get('/', async function (req, res, next) {
   WHERE st.id = ac.status
     AND at.id = ac.activity_type;`;
     let data = await db.select(query);
-    data = data.map(async (activity) => ({ ...activity, scheduledPower: await getForce(activity.id) }))
+    console.log(data);
+    data = await Promise.all(data.map(async (activity) => {
+      const scheduledPower = await getForce(activity.id);
+      return { ...activity, scheduledPower }
+    }))
     console.log(data);
     res.send(data);
   } catch (err) {
