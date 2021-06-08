@@ -26,7 +26,7 @@ router.get('/', async function (req, res, next) {
 
 
 router.get('/:id', async function (req, res, next) {
-  if (!Number.isInteger(req.params.id)) {
+  if (isNaN(req.params.id)) {
     res.sendStatus(404);
   }
 
