@@ -37,7 +37,7 @@ router.post('/', async function (req, res, next) {
     const policemans = force.map(policeman => ({ 'officer_id': policeman, 'activity_id': id[0].id }));
     await db.insert(policemans, ['officer_id', 'activity_id'], 'activity_forces');
 
-    res.send({...req.body.report, id});
+    res.send({...req.body.activity, id});
   } catch (err) {
     console.log(err);
   }
