@@ -9,13 +9,6 @@ const cn = {
     user: 'gali',
     password: 'gali'
 };
-// const cn = {
-//     host: '127.0.0.1', // server name or IP address;
-//     port: 32000,
-//     database: 'gali',
-//     user: 'gali',
-//     password: 'gali'
-// };
 
 const db = pgp(cn);
 
@@ -46,7 +39,7 @@ exports.selectWithCondition = selectWithCondition = async (fieldToSelect, fieldT
 
 exports.insert = insert = async (values, fields, table, isReturn = false) => {
     try {
-        let query = pgp.helpers.insert(values, fields, table)
+        let query = pgp.helpers.insert(values, new pgp.helpers.ColumnSet(fields), new pgp.helpers.TableName(table))
         query = isReturn ? query + 'RETURNING id' : query;
         return await db.any(query);
     } catch (err) {

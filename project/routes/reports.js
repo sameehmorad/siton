@@ -25,23 +25,23 @@ router.get('/statuses', async (req, res, next) => {
     res.send(data);
 });
 
-// router.post('/', async (req, res, next) => {
-//     const fields = ['event_name', 'event_type', 'event_time', 'report_time, user_name', 'lat', 'lon', 'criminal'];
-//     const table = 'reports';
+router.post('/', async (req, res, next) => {
+    const fields = ['event_name', 'event_type', 'event_time', 'report_time, user_name', 'lat', 'lon', 'criminal'];
+    const table = 'reports';
 
-//     switch (req.body.report.event_type) {
-//         case 1:
+    switch (req.body.report.event_type) {
+        case 1:
 
-//     };
+    };
 
-//     await db.insert(req.body.report, fields, table);
-//     res.send();
-// });
+    await db.insert(req.body.report, fields, table);
+    res.send();
+});
 
-// const stabbing = (report_id) => {
-//     const fields = ['report_id', 'weapon_type', 'casualties'];
-//     const table = 'event_description';
+const stabbing = (report_id) => {
+    const fields = ['report_id', 'weapon_type', 'casualties'];
+    const table = 'event_description';
 
-// }
+}
 
 module.exports = router;
