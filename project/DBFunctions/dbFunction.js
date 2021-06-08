@@ -10,7 +10,6 @@ const cn = {
     password: 'gali'
 };
 
-
 const db = pgp(cn);
 
 exports.select = select = (query) => {
@@ -27,9 +26,8 @@ exports.select = select = (query) => {
 
 exports.selectWithCondition = selectWithCondition = async (fieldToSelect, fieldToCompare, valueTocompare, table) => {
     try {
-        const query = pgp.helpers.concat([
-            { query: 'SELECT $1 FROM $2 WHERE $3=$4;', values: [fieldToSelect, table, fieldToCompare, valueTocompare] }]);
-            console.log(query);
+        const query = `SELECT ${fieldToSelect} FROM ${table} WHERE ${fieldToCompare}=${valueTocompare}`
+        console.log(query);
         const data = await db.many(query);
         console.log(data);
         return data;
