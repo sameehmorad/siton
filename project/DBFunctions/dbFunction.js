@@ -45,10 +45,10 @@ exports.selectWithCondition = selectWithCondition = async (fieldToSelect, fieldT
 
 };
 
-exports.insert = insert = async (values, fields, table, isReturn = false) => {
+exports.insert = insert = async (values, fields, table, returnValue = '') => {
     try {
         let query = pgp.helpers.insert(values, new pgp.helpers.ColumnSet(fields), new pgp.helpers.TableName(table))
-        query = isReturn ? query + 'RETURNING id' : query;
+        query = query + returnValue;
         return await db.any(query);
     } catch (err) {
         console.log(err);

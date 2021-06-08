@@ -38,7 +38,7 @@ router.post('/', async (req, res, next) => {
     let table = 'reports';
     let values = fields.reduce((object, field) => ({ ...object, [field]: req.body.report[field] }), {});
 
-    const id = await db.insert(values, fields, table, true);
+    const id = await db.insert(values, fields, table, 'RETURNING id');
 
     table = tables[values.event_type - 1];
     const colunms = (await db.getColumns(table)).map(colunm => colunm.column_name);
