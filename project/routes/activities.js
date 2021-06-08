@@ -56,8 +56,8 @@ FROM status_types;`;
 
 router.get('/types', async function (req, res, next) {
   const query = `
-SELECT id, status_name
-FROM status_types;`;
+SELECT id, activity_name
+FROM activity_types;`;
   const data = await db.select(query);
   res.send(data);
 });
