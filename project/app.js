@@ -1,12 +1,12 @@
-var createError = require('http-errors');
-var express = require('express');
+const createError = require('http-errors');
+const express = require('express');
 const cors = require('cors');
-var path = require('path');
-var cookieParser = require('cookie-parser');
-var logger = require('morgan');
+const path = require('path');
+const cookieParser = require('cookie-parser');
+const logger = require('morgan');
 
-var activitiesRouter = require('./routes/activities');
-var usersRouter = require('./routes/users');
+const activitiesRouter = require('./routes/activities');
+const usersRouter = require('./routes/users');
 const reportsRouter = require('./routes/reports');
 
 var app = express();

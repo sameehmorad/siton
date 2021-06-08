@@ -1,7 +1,7 @@
 
 const express = require('express');
 const router = express.Router();
-const db = require('../DBFunctions/dbFunction')
+const db = require('../DBFunctions/dbFunction');
 
 /* GET home page. */
 router.get('/', async function (req, res, next) {
