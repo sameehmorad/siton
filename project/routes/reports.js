@@ -12,17 +12,12 @@ router.get('/', async function (req, res, next) {
     res.send(data);
 });
 
-const getTypes = async () => {
+router.get('/events', async (req, res, next) => {
     const query = `
-  SELECT id, status_name
-  FROM status_types;`;
-    const data = await db.select(query);
-    return data;
-}
-
-router.get('/statuses', async (req, res, next) => {
-    const data = await getTypes();
-    res.send(data);
+    SELECT id, event_name
+    FROM event_types;`;
+      const data = await db.select(query);
+      res.send(data);
 });
 
 router.post('/', async (req, res, next) => {
