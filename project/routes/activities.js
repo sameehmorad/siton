@@ -23,6 +23,34 @@ router.get('/', async function (req, res, next) {
   }
 });
 
+
+
+router.get('/:id', async function (req, res, next) {
+  if (!Number.isInteger(req.params.id)) {
+    res.sendStatus(404);
+  }
+
+  try {
+    const query = `
+  SELECT ac.id, ac.activity_name, at.activity_name AS activity_type, ac.activity_time, ac.activity_goal, st.status_name, ac.activity_approver
+  FROM activities ac, status_types st, activity_types at
+  WHERE ac.id = ${req.params.id}
+    AND st.id = ac.status
+    AND at.id = ac.activity_type;`;
+    let data = await db.select(query);
+    console.log(data);
+    data = await Promise.all(data.map(async (activity) => {
+      const scheduledPower = await getForce(activity.id);
+      return { ...activity, scheduledPower }
+    }));
+
+    console.log(data);
+    res.send(data[0]);
+  } catch (err) {
+    console.log(err);
+  }
+});
+
 const getForce = async (id) => {
   const table = await db.selectWithCondition("officer_id", "activity_id", id, "activity_forces");
   console.log(table);
