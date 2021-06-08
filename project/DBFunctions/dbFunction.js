@@ -26,9 +26,9 @@ exports.select = select = (query) => {
 
 exports.selectWithCondition = selectWithCondition = async (fieldToSelect, fieldToCompare, valueTocompare, table) => {
     try {
-        const query = `SELECT ${fieldToSelect} FROM ${table} WHERE ${fieldToCompare}=${valueTocompare}`
+        const query = `SELECT ${fieldToSelect} FROM ${table} WHERE ${fieldToCompare}=${valueTocompare};`
         console.log(query);
-        const data = await db.many(query);
+        const data = await db.any(query);
         console.log(data);
         return data;
     } catch (err) {
