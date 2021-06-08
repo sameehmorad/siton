@@ -6,7 +6,7 @@ const db = require('../DBFunctions/dbFunction')
 router.get('/', async function (req, res, next) {
   try {
     const query = `
-  SELECT ac.id, ac.activity_name, at.activity_name AS activity_type, ac.activity_time, ac.activity_goal, st.status_name, ac.activity_approver
+  SELECT ac.id, ac.activity_name, at.activity_name AS activity_type, ac.activity_time, ac.activity_goal, st.status_name, ac.activity_approver, ac.lat, ac.lon
   FROM activities ac, status_types st, activity_types at
   WHERE st.id = ac.status
     AND at.id = ac.activity_type;`;
@@ -31,7 +31,7 @@ const getForce = async (id) => {
 
 router.post('/', async function (req, res, next) {
   try {
-    const fields = ['activity_name', 'activity_type', 'activity_time', 'activity_goal', 'status', 'activity_approver'];
+    const fields = ['activity_name', 'activity_type', 'activity_time', 'activity_goal', 'status', 'activity_approver', 'lat', 'lon'];
     const table = 'activities';
     const values = fields.reduce((object, field) => ({ ...object, [field]: req.body.activity[field] }), {});
     const id = await db.insert(values, fields, table, true);
