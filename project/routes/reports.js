@@ -6,22 +6,35 @@ const db = require('../DBFunctions/dbFunction')
 /* GET home page. */
 router.get('/', async function (req, res, next) {
     const query = `
-  SELECT id, event_name, event_description, event_type, event_time, report_time, user_name, lat, lon, criminal
-  FROM reports;`;
-    const data = await db.select(query);
+  SELECT rep.id, rep.event_name, rep.event_description, rep.event_type AS event_id, et.event_name AS event_type, rep.event_time, rep.report_time, rep.user_name, rep.lat, rep.lon, rep.criminal
+  FROM reports rep,event_types et
+  WHERE rep.event_type = et.id;`;
+    let data = await db.select(query);
+    data = await Promise.all(data.map(async (report) => {
+        const specificData = await getMoreDetails(report);
+        return { ...report, ...specificData[0] }
+    }));
+
     res.send(data);
 });
+
+const getMoreDetails = async (report) => {
+    const tables = ['shooting_reports', 'stabbing_reports', 'kidnap_reports', 'accident_reports'];
+    const table = tables[report.event_id - 1];
+    const colunms = (await db.getColumns(table)).map(colunm => colunm.column_name).toString();
+    return await db.selectWithCondition(colunms, 'report_id', report.id, table);
+};
 
 router.get('/events', async (req, res, next) => {
     const query = `
     SELECT id, event_name
     FROM event_types;`;
-      const data = await db.select(query);
-      res.send(data);
+    const data = await db.select(query);
+    res.send(data);
 });
 
 router.post('/', async (req, res, next) => {
-    let fields = ['event_name','event_description', 'event_type', 'event_time', 'report_time', 'user_name', 'lat', 'lon', 'criminal'];
+    let fields = ['event_name', 'event_description', 'event_type', 'event_time', 'report_time', 'user_name', 'lat', 'lon', 'criminal'];
     let table = 'reports';
     let values = fields.reduce((object, field) => ({ ...object, [field]: req.body.report[field] }), {});
 
