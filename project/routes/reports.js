@@ -2,6 +2,7 @@
 const express = require('express');
 const router = express.Router();
 const db = require('../DBFunctions/dbFunction');
+const tables = ['shooting_reports', 'stabbing_reports', 'kidnap_reports', 'accident_reports', 'insulation_reports'];
 
 /* GET home page. */
 router.get('/', async function (req, res, next) {
@@ -19,7 +20,6 @@ router.get('/', async function (req, res, next) {
 });
 
 const getMoreDetails = async (report) => {
-    const tables = ['shooting_reports', 'stabbing_reports', 'kidnap_reports', 'accident_reports'];
     const table = tables[report.event_id - 1];
     const colunms = (await db.getColumns(table)).map(colunm => colunm.column_name).toString();
     return await db.selectWithCondition(colunms, 'report_id', report.id, table);
@@ -39,7 +39,6 @@ router.post('/', async (req, res, next) => {
     let values = fields.reduce((object, field) => ({ ...object, [field]: req.body.report[field] }), {});
 
     const id = await db.insert(values, fields, table, true);
-    const tables = ['shooting_reports', 'stabbing_reports', 'kidnap_reports', 'accident_reports'];
 
     table = tables[values.event_type - 1];
     const colunms = (await db.getColumns(table)).map(colunm => colunm.column_name);
