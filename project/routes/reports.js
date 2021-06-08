@@ -26,22 +26,21 @@ router.get('/statuses', async (req, res, next) => {
 });
 
 router.post('/', async (req, res, next) => {
-    const fields = ['event_name', 'event_type', 'event_time', 'report_time, user_name', 'lat', 'lon', 'criminal'];
-    const table = 'reports';
+    let fields = ['event_name','event_description', 'event_type', 'event_time', 'report_time', 'user_name', 'lat', 'lon', 'criminal'];
+    let table = 'reports';
+    let values = fields.reduce((object, field) => ({ ...object, [field]: req.body.report[field] }), {});
 
-    switch (req.body.report.event_type) {
-        case 1:
+    const id = await db.insert(values, fields, table, true);
+    const tables = ['shooting_reports', 'stabbing_reports', 'kidnap_reports', 'accident_reports'];
 
-    };
+    table = tables[values.event_type - 1];
+    const colunms = (await db.getColumns(table)).map(colunm => colunm.column_name);
+    req.body.report["report_id"] = id[0].id;
+    values = colunms.reduce((object, field) => ({ ...object, [field]: req.body.report[field] }), {});
 
-    await db.insert(req.body.report, fields, table);
+    await db.insert(values, colunms, table);
+
     res.send();
 });
-
-const stabbing = (report_id) => {
-    const fields = ['report_id', 'weapon_type', 'casualties'];
-    const table = 'event_description';
-
-}
 
 module.exports = router;
