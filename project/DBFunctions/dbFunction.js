@@ -10,6 +10,15 @@ const cn = {
     password: 'gali'
 };
 
+// const cn = {
+//     host: '127.0.0.1', // server name or IP address;
+//     port: 32000,
+//     database: 'gali',
+//     user: 'gali',
+//     password: 'gali'
+// };
+
+
 const db = pgp(cn);
 
 exports.select = select = (query) => {

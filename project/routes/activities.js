@@ -36,7 +36,7 @@ router.post('/', async function (req, res, next) {
     const values = fields.reduce((object, field) => ({ ...object, [field]: req.body.activity[field] }), {});
     const id = await db.insert(values, fields, table, true);
     const force = req.body.activity.scheduledPower;
-    const policemans = force.map(policeman => ({ 'officer_id': policeman, 'activity_id': id }));
+    const policemans = force.map(policeman => ({ 'officer_id': policeman, 'activity_id': id[0].id }));
     await db.insert(policemans, ['officer_id', 'activity_id'], 'activity_forces');
 
     res.send();
