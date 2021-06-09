@@ -1,13 +1,23 @@
 const express = require('express');
 const router = express.Router();
 const db = require('../DBFunctions/dbFunction');
+const { clients } = require('users.js');
 const query = `
   SELECT ac.id, ac.activity_name, at.activity_name AS activity_type, ac.activity_time, ac.activity_goal, st.status_name, ac.activity_approver, ac.lat, ac.lon
   FROM activities ac, status_types st, activity_types at
   WHERE st.id = ac.status
     AND at.id = ac.activity_type;`;
 
-/* GET home page. */
+
+function sendEventsToAll(activity, force) {
+  try {
+    clients.filter(client => force.includes(client.name)).forEach(client => client.response.write(`data: ${JSON.stringify(activity)}\n\n`));
+    console.log("send alerts");
+  } catch(err) {
+    console.log(err);
+  }
+}
+
 router.get('/', async function (req, res, next) {
   try {
     let data = await db.select(query);
@@ -65,8 +75,9 @@ FROM activity_types;`;
 router.patch('/start/:id', async (req, res) => {
   if (!isNaN(req.params.id)) {
     const status = await db.selectWithCondition("id", "status_name", "'מתרחש עכשיו'", "status_types");
-    const activity = await db.update({"status": status[0].id}, ["status"], "activities", `WHERE id=${req.params.id} RETURNING *`);
-    res.send({...activity[0], "status_name":"מתרחש עכשיו"});
+    const activity = await db.update({ "status": status[0].id }, ["status"], "activities", `WHERE id=${req.params.id} RETURNING *`);
+    sendEventsToAll({ ...activity[0], "status_name": "מתרחש עכשיו" });
+    res.send({ ...activity[0], "status_name": "מתרחש עכשיו" });
   }
   res.sendStatus(404);
 })

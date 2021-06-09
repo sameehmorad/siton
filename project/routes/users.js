@@ -3,6 +3,36 @@ const jwt = require('jsonwebtoken');
 const router = express.Router();
 const db = require('../DBFunctions/dbFunction');
 
+const clients = [];
+
+eventsHandler = (request, response, next) => {
+  const headers = {
+    'Content-Type': 'text/event-stream',
+    'Connection': 'keep-alive',
+    'Cache-Control': 'no-cache'
+  };
+  response.writeHead(200, headers);
+
+  const data = `data: ${JSON.stringify(facts)}\n\n`;
+
+  response.write(data);
+
+  const clientId = Date.now();
+
+  const newClient = {
+    id: clientId,
+    name: request.body.userName,
+    response
+  };
+
+  clients.push(newClient);
+
+  request.on('close', () => {
+    console.log(`${clientId} Connection closed`);
+    clients = clients.filter(client => client.id !== clientId);
+  });
+}
+
 router.post('/login', async (req, res, next) => {
   const colunms = (await db.getColumns("users")).map(colunm => colunm.column_name).toString();
   const user = await db.selectWithCondition(colunms, 'user_name', "'" + req.body.userName + "'", "users");
@@ -16,6 +46,7 @@ router.post('/login', async (req, res, next) => {
   } else {
     const token = jwt.sign({ userName: user.user_name, admin: user.is_admin }, 'loginUser');
     delete user[0].password;
+    eventsHandler(req, res, next);
     console.log("login succeeded " + token);
     res.send({ token, user: user[0] });
   }
@@ -46,4 +77,4 @@ router.get('/', async (req, res, next) => {
   res.send(users);
 });
 
-module.exports = router;
+module.exports = { router, clients };

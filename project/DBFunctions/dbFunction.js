@@ -2,22 +2,21 @@ const pgp = require('pg-promise')({
     capSQL: true
 });
 
-const cn = {
-    host: '172.30.195.209', // server name or IP address;
-    port: 5432,
-    database: 'gali',
-    user: 'gali',
-    password: 'gali'
-};
-
 // const cn = {
-//     host: '127.0.0.1', // server name or IP address;
-//     port: 32000,
+//     host: '172.30.195.209', // server name or IP address;
+//     port: 5432,
 //     database: 'gali',
 //     user: 'gali',
 //     password: 'gali'
 // };
 
+const cn = {
+    host: '127.0.0.1', // server name or IP address;
+    port: 32000,
+    database: 'gali',
+    user: 'gali',
+    password: 'gali'
+};
 
 const db = pgp(cn);
 
