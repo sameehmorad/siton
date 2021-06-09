@@ -19,7 +19,7 @@ router.get('/', async function (req, res, next) {
     res.send(data);
 });
 
-router.get('/:region', async function (req, res, next) {
+router.get('/by/:region', async function (req, res, next) {
     const regions = (await db.select("SELECT region_name FROM regions;")).map(reg => (reg.region_name));
     if (regions.includes(req.body.region)) {
         const query = `
@@ -39,19 +39,19 @@ router.get('/:region', async function (req, res, next) {
     res.sendStatus(404);
 });
 
+router.get('/events', async (req, res, next) => { // 
+    const query = `
+    SELECT id, event_name
+    FROM event_types;`;
+    let data = await db.select(query);
+    res.send(data);
+});
+
 const getMoreDetails = async (report) => {
     const table = tables[report.event_id - 1];
     const colunms = (await db.getColumns(table)).map(colunm => colunm.column_name).toString();
     return await db.selectWithCondition(colunms, 'report_id', report.id, table);
 };
-
-router.get('/events', async (req, res, next) => {
-    const query = `
-    SELECT id, event_name
-    FROM event_types;`;
-    const data = await db.select(query);
-    res.send(data);
-});
 
 router.post('/', async (req, res, next) => {
     let fields = ['event_name', 'event_description', 'event_type', 'event_time', 'report_time', 'user_name', 'lat', 'lon', 'region', 'criminal'];

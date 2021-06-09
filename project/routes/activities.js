@@ -46,8 +46,8 @@ router.post('/', async function (req, res, next) {
     const force = req.body.activity.scheduledPower;
     const policemans = force.map(policeman => ({ 'officer_id': policeman, 'activity_id': id[0].id }));
     await db.insert(policemans, ['officer_id', 'activity_id'], 'activity_forces');
-    const activity_type = await db.selectWithCondition("activity_name", "id", id[0].activity_type, "activity_types");
-    const status_name = await db.selectWithCondition("status_name", "id", id[0].status, "status_types");
+    const activity_type = (await db.selectWithCondition("activity_name", "id", id[0].activity_type, "activity_types"))[0].activity_name;
+    const status_name = (await db.selectWithCondition("status_name", "id", id[0].status, "status_types"))[0].status_name;
 
     res.send({ ...id[0], scheduledPower: force, activity_type, status_name });
   } catch (err) {

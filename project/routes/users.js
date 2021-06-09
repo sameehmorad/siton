@@ -42,7 +42,7 @@ router.post('/login', async (req, res, next) => {
   } else {
     const token = jwt.sign({ userName: user.user_name, admin: user.is_admin }, 'loginUser');
     delete user[0].password;
-    eventsHandler(req, res, next);
+    // eventsHandler(req, res, next);
     console.log("login succeeded " + token);
     res.send({ token, user: user[0] });
   }
