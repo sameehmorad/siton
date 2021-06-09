@@ -32,12 +32,12 @@ router.post('/', async function (req, res, next) {
     const fields = ['activity_name', 'activity_type', 'activity_time', 'activity_goal', 'status', 'activity_approver', 'lat', 'lon'];
     const table = 'activities';
     const values = fields.reduce((object, field) => ({ ...object, [field]: req.body.activity[field] }), {});
-    const id = await db.insert(values, fields, table, 'RETURNING id');
+    const id = await db.insert(values, fields, table, 'RETURNING *');
     const force = req.body.activity.scheduledPower;
     const policemans = force.map(policeman => ({ 'officer_id': policeman, 'activity_id': id[0].id }));
     await db.insert(policemans, ['officer_id', 'activity_id'], 'activity_forces');
 
-    res.send({ ...req.body.activity, id: id[0].id });
+    res.send({ ...id[0], scheduledPower: force });
   } catch (err) {
     console.log(err);
   }
