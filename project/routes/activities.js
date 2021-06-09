@@ -30,7 +30,7 @@ router.get('/inAction/:userName', async function (req, res, next) {
       const colunms = (await db.getColumns(table)).map(colunm => colunm.column_name).toString();
       const query = `SELECT ${colunms} 
       FROM activities, activity_forces
-      WHERE officer_id = ${userName}
+      WHERE officer_id = ${req.params.userName}
         AND activity_id = id;`
       let data = await db.select(query);
       res.send(data);
