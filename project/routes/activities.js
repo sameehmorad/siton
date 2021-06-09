@@ -46,7 +46,7 @@ router.post('/', async function (req, res, next) {
 
 });
 
-router.get('/statuses', async function (req, res, next) {
+router.get('/statuses', async (req, res, next) => {
   const query = `
 SELECT id, status_name
 FROM status_types;`;
@@ -54,12 +54,20 @@ FROM status_types;`;
   res.send(data);
 });
 
-router.get('/types', async function (req, res, next) {
+router.get('/types', async (req, res, next) => {
   const query = `
 SELECT id, activity_name
 FROM activity_types;`;
   const data = await db.select(query);
   res.send(data);
 });
+
+router.patch('/approve/:id', async (req, res) => {
+  if (!isNaN(req.params.id)) {
+    const status = await db.selectWithCondition("id", "status_name", "מתרחש עכשיו", "status_types");
+    const activity = await db.update(status, "status", "activities", `WHERE id=${req.params.id} RETURNING *`);
+    res.send({...activity, "status_name":"מתרחש עכשיו"});
+  }
+})
 
 module.exports = router;

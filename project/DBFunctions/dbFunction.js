@@ -55,6 +55,16 @@ exports.insert = insert = async (values, fields, table, returnValue = '') => {
     }
 };
 
+exports.update = update = async (values, fields, table, condition = '') => {
+    try {
+        let query = pgp.helpers.update(values, new pgp.helpers.ColumnSet(fields), new pgp.helpers.TableName(table));
+        query = query + condition;
+        return await db.any(query);
+    } catch (err) {
+        console.log(err);
+    }
+};
+
 exports.getColumns = getColumns = async (table) => {
     try {
         const query = `
