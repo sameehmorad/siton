@@ -1,15 +1,15 @@
 const express = require('express');
 const router = express.Router();
-const db = require('../DBFunctions/dbFunction')
-
-/* GET home page. */
-router.get('/', async function (req, res, next) {
-  try {
-    const query = `
+const db = require('../DBFunctions/dbFunction');
+const query = `
   SELECT ac.id, ac.activity_name, at.activity_name AS activity_type, ac.activity_time, ac.activity_goal, st.status_name, ac.activity_approver, ac.lat, ac.lon
   FROM activities ac, status_types st, activity_types at
   WHERE st.id = ac.status
     AND at.id = ac.activity_type;`;
+
+/* GET home page. */
+router.get('/', async function (req, res, next) {
+  try {
     let data = await db.select(query);
     data = await Promise.all(data.map(async (activity) => {
       const scheduledPower = await getForce(activity.id);
@@ -36,8 +36,10 @@ router.post('/', async function (req, res, next) {
     const force = req.body.activity.scheduledPower;
     const policemans = force.map(policeman => ({ 'officer_id': policeman, 'activity_id': id[0].id }));
     await db.insert(policemans, ['officer_id', 'activity_id'], 'activity_forces');
+    const activity_type = await db.selectWithCondition("activity_name", "id", id[0].activity_type, "activity_types");
+    const status_name = await db.selectWithCondition("status_name", "id", id[0].status, "status_types");
 
-    res.send({ ...id[0], scheduledPower: force , activity_type: req.body.activity[activity_type], status_name: req.body.activity[status]});
+    res.send({ ...id[0], scheduledPower: force, activity_type, status_name });
   } catch (err) {
     console.log(err);
   }
