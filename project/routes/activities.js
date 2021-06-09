@@ -26,7 +26,7 @@ router.get('/inAction/:userName', async function (req, res, next) {
   try {
     const query = 'SELECT user_name FROM users;'
     const users = (await db.select(query)).map(user => user.user_name);
-    if (!user.includes(id)) {
+    if (!users.includes(id)) {
       const colunms = (await db.getColumns(table)).map(colunm => colunm.column_name).toString();
       const query = `SELECT ${colunms} 
       FROM activities, activity_forces
