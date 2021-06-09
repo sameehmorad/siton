@@ -13,10 +13,6 @@ eventsHandler = (request, response, next) => {
   };
   response.writeHead(200, headers);
 
-  const data = `data: ${JSON.stringify(facts)}\n\n`;
-
-  response.write(data);
-
   const clientId = Date.now();
 
   const newClient = {
