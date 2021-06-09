@@ -2,10 +2,9 @@ const express = require('express');
 const jwt = require('jsonwebtoken');
 const router = express.Router();
 const db = require('../DBFunctions/dbFunction');
+let clients = [];
 
-const clients = [];
-
-eventsHandler = (request, response, next) => {
+const eventsHandler = (request, response, next) => {
   const headers = {
     'Content-Type': 'text/event-stream',
     'Connection': 'keep-alive',
@@ -27,7 +26,9 @@ eventsHandler = (request, response, next) => {
     console.log(`${clientId} Connection closed`);
     clients = clients.filter(client => client.id !== clientId);
   });
-}
+};
+
+router.get('/stayConnected', eventsHandler);
 
 router.post('/login', async (req, res, next) => {
   const colunms = (await db.getColumns("users")).map(colunm => colunm.column_name).toString();
@@ -42,7 +43,6 @@ router.post('/login', async (req, res, next) => {
   } else {
     const token = jwt.sign({ userName: user.user_name, admin: user.is_admin }, 'loginUser');
     delete user[0].password;
-    // eventsHandler(req, res, next);
     console.log("login succeeded " + token);
     res.send({ token, user: user[0] });
   }
@@ -73,4 +73,5 @@ router.get('/', async (req, res, next) => {
   res.send(users);
 });
 
-module.exports = { router, clients };
+exports.usersRouter = router;
+exports.clients = clients;

@@ -6,10 +6,37 @@ const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 
 const activitiesRouter = require('./routes/activities');
-const { router } = require('./routes/users');
+const { usersRouter } = require('./routes/users');
 const reportsRouter = require('./routes/reports');
 
 var app = express();
+
+exports.clients = clients = [];
+
+const eventsHandler = (request, response, next) => {
+  const headers = {
+    'Content-Type': 'text/event-stream',
+    'Connection': 'keep-alive',
+    'Cache-Control': 'no-cache'
+  };
+  response.writeHead(200, headers);
+
+  const clientId = Date.now();
+
+  const newClient = {
+    id: clientId,
+    name: request.body.userName,
+    response
+  };
+
+  clients.push(newClient);
+
+  request.on('close', () => {
+    console.log(`${clientId} Connection closed`);
+    clients = clients.filter(client => client.id !== clientId);
+  });
+};
+
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -30,7 +57,7 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/activities', activitiesRouter);
-app.use('/users', router);
+app.use('/users', usersRouter);
 app.use('/reports', reportsRouter);
 
 
@@ -49,6 +76,8 @@ app.use(function (err, req, res, next) {
   res.status(err.status || 500);
   res.render('error');
 });
+
+app.post('users/login', eventsHandler);
 
 const server = app.listen(8080, () => {
   console.log(`Express running → PORT ${server.address().port}`);

@@ -13,7 +13,7 @@ function sendEventsToAll(activity, force) {
   try {
     clients.filter(client => force.includes(client.name)).forEach(client => client.response.write(`data: ${JSON.stringify(activity)}\n\n`));
     console.log("send alerts");
-  } catch(err) {
+  } catch (err) {
     console.log(err);
   }
 }
@@ -77,7 +77,16 @@ router.patch('/start/:id', async (req, res) => {
     const status = await db.selectWithCondition("id", "status_name", "'מתרחש עכשיו'", "status_types");
     const activity = await db.update({ "status": status[0].id }, ["status"], "activities", `WHERE id=${req.params.id} RETURNING *`);
     sendEventsToAll({ ...activity[0], "status_name": "מתרחש עכשיו" });
-    res.send({ ...activity[0], "status_name": "מתרחש עכשיו" });
+    // res.send({ ...activity[0], "status_name": "מתרחש עכשיו" });
+  }
+  res.sendStatus(404);
+})
+
+router.patch('/end/:id', async (req, res) => {
+  if (!isNaN(req.params.id)) {
+    const status = await db.selectWithCondition("id", "status_name", "'הסתיים'", "status_types");
+    const activity = await db.update({ "status": status[0].id }, ["status"], "activities", `WHERE id=${req.params.id} RETURNING *`);
+    res.send({ ...activity[0], "status_name": "הסתיים" });
   }
   res.sendStatus(404);
 })
