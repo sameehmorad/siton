@@ -2,15 +2,15 @@ const express = require('express');
 const router = express.Router();
 const db = require('../DBFunctions/dbFunction');
 const { clients } = require('./users');
-const query = `
+
+router.get('/', async function (req, res, next) {
+  try {
+    const query = `
   SELECT ac.id, ac.activity_name, at.activity_name AS activity_type, ac.activity_time, ac.activity_goal, st.status_name, ac.activity_approver, ac.lat, ac.lon
   FROM activities ac, status_types st, activity_types at
   WHERE st.id = ac.status
     AND at.id = ac.activity_type;`;
 
-
-router.get('/', async function (req, res, next) {
-  try {
     let data = await db.select(query);
     data = await Promise.all(data.map(async (activity) => {
       const scheduledPower = await getForce(activity.id);
@@ -22,19 +22,25 @@ router.get('/', async function (req, res, next) {
   }
 });
 
-// router.get('/inAction/:id', async function (req, res, next) {
-//   try {
-//     if(!isNaN)
-//     let data = await db.select(query);
-//     data = await Promise.all(data.map(async (activity) => {
-//       const scheduledPower = await getForce(activity.id);
-//       return { ...activity, scheduledPower }
-//     }))
-//     res.send(data);
-//   } catch (err) {
-//     console.log(err);
-//   }
-// });
+router.get('/inAction/:userName', async function (req, res, next) {
+  try {
+    const query = 'SELECT user_name FROM users;'
+    const users = (await db.select(query)).map(user => user.user_name);
+    if (!user.includes(id)) {
+      const colunms = (await db.getColumns(table)).map(colunm => colunm.column_name).toString();
+      const query = `SELECT ${colunms} 
+      FROM activities, activity_forces
+      WHERE officer_id = ${userName}
+        AND activity_id = id;`
+      let data = await db.select(query);
+      res.send(data);
+    }
+    res.status = 404;
+  } catch (err) {
+    console.log(err);
+  }
+  res.send();
+});
 
 const getForce = async (id) => {
   const table = await db.selectWithCondition("officer_id", "activity_id", id, "activity_forces");
