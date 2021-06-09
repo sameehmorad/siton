@@ -3,16 +3,18 @@ const jwt = require('jsonwebtoken');
 const router = express.Router();
 const db = require('../DBFunctions/dbFunction');
 
-router.post('/login', function(req, res, next) {
-  const user = db.selectWithCondition('user_name,password,is_admin','user_name',req.body.userName);
+router.post('/login', async (req, res, next) => {
+  const colunms = (await db.getColumns("users")).map(colunm => colunm.column_name).toString();
+  const user = await db.selectWithCondition(colunms, 'user_name', "'" + req.body.userName + "'", "users");
 
   if (!user) {
     res.sendStatus(404);
-  } else if (user.password !== req.body.password) {
+  } else if (user[0].password !== req.body.password) {
     res.sendStatus(403);
   } else {
     const token = jwt.sign({ userName: user.user_name, admin: user.is_admin }, 'loginUser');
-    res.send(token);
+    delete user[0].password;
+    res.send({ token, user: user[0] });
   }
 });
 

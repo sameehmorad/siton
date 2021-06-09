@@ -7,7 +7,7 @@ const tables = ['shooting_reports', 'stabbing_reports', 'kidnap_reports', 'accid
 /* GET home page. */
 router.get('/', async function (req, res, next) {
     const query = `
-  SELECT rep.id, rep.event_name, rep.event_description, rep.event_type AS event_id, et.event_name AS event_type, rep.event_time, rep.report_time, rep.user_name, rep.lat, rep.lon, rep.criminal
+  SELECT rep.id, rep.event_name, rep.event_description, rep.event_type AS event_id, et.event_name AS event_type, rep.event_time, rep.report_time, rep.user_name, rep.lat, rep.lon, rep.region, rep.criminal
   FROM reports rep,event_types et
   WHERE rep.event_type = et.id;`;
     let data = await db.select(query);
@@ -34,7 +34,7 @@ router.get('/events', async (req, res, next) => {
 });
 
 router.post('/', async (req, res, next) => {
-    let fields = ['event_name', 'event_description', 'event_type', 'event_time', 'report_time', 'user_name', 'lat', 'lon', 'criminal'];
+    let fields = ['event_name', 'event_description', 'event_type', 'event_time', 'report_time', 'user_name', 'lat', 'lon', 'region', 'criminal'];
     let table = 'reports';
     let values = fields.reduce((object, field) => ({ ...object, [field]: req.body.report[field] }), {});
 
