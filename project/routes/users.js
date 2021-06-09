@@ -23,7 +23,7 @@ router.post('/login', async (req, res, next) => {
 
 
 router.get('/', async (req, res, next) => {
-  const query = 'SELECT user_name FROM users;'
+  const query = 'SELECT user_name, photo FROM users;'
   const users = await db.select(query);
   res.send(users);
 });

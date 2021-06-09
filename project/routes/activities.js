@@ -68,6 +68,7 @@ router.patch('/start/:id', async (req, res) => {
     const activity = await db.update({"status": status[0].id}, ["status"], "activities", `WHERE id=${req.params.id} RETURNING *`);
     res.send({...activity[0], "status_name":"מתרחש עכשיו"});
   }
+  res.sendStatus(404);
 })
 
 module.exports = router;
