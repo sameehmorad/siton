@@ -62,11 +62,11 @@ FROM activity_types;`;
   res.send(data);
 });
 
-router.patch('/approve/:id', async (req, res) => {
+router.patch('/start/:id', async (req, res) => {
   if (!isNaN(req.params.id)) {
-    const status = await db.selectWithCondition("id", "status_name", "מתרחש עכשיו", "status_types");
-    const activity = await db.update(status, "status", "activities", `WHERE id=${req.params.id} RETURNING *`);
-    res.send({...activity, "status_name":"מתרחש עכשיו"});
+    const status = await db.selectWithCondition("id", "status_name", "'מתרחש עכשיו'", "status_types");
+    const activity = await db.update({"status": status[0].id}, ["status"], "activities", `WHERE id=${req.params.id} RETURNING *`);
+    res.send({...activity[0], "status_name":"מתרחש עכשיו"});
   }
 })
 

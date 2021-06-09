@@ -16,9 +16,16 @@ router.post('/login', async (req, res, next) => {
   } else {
     const token = jwt.sign({ userName: user.user_name, admin: user.is_admin }, 'loginUser');
     delete user[0].password;
-    console.log("login succeeded "+ token);
+    console.log("login succeeded " + token);
     res.send({ token, user: user[0] });
   }
+});
+
+
+router.get('/', async (req, res, next) => {
+  const query = 'SELECT user_name FROM users;'
+  const users = await db.select(query);
+  res.send(users);
 });
 
 module.exports = router;
