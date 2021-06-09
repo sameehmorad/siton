@@ -2,33 +2,6 @@ const express = require('express');
 const jwt = require('jsonwebtoken');
 const router = express.Router();
 const db = require('../DBFunctions/dbFunction');
-let clients = [];
-
-const eventsHandler = (request, response, next) => {
-  const headers = {
-    'Content-Type': 'text/event-stream',
-    'Connection': 'keep-alive',
-    'Cache-Control': 'no-cache'
-  };
-  response.writeHead(200, headers);
-
-  const clientId = Date.now();
-
-  const newClient = {
-    id: clientId,
-    name: request.body.userName,
-    response
-  };
-
-  clients.push(newClient);
-
-  request.on('close', () => {
-    console.log(`${clientId} Connection closed`);
-    clients = clients.filter(client => client.id !== clientId);
-  });
-};
-
-router.get('/stayConnected', eventsHandler);
 
 router.post('/login', async (req, res, next) => {
   const colunms = (await db.getColumns("users")).map(colunm => colunm.column_name).toString();
@@ -73,5 +46,4 @@ router.get('/', async (req, res, next) => {
   res.send(users);
 });
 
-exports.usersRouter = router;
-exports.clients = clients;
+module.exports = router;

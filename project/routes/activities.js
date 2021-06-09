@@ -9,15 +9,6 @@ const query = `
     AND at.id = ac.activity_type;`;
 
 
-function sendEventsToAll(activity, force) {
-  try {
-    clients.filter(client => force.includes(client.name)).forEach(client => client.response.write(`data: ${JSON.stringify(activity)}\n\n`));
-    console.log("send alerts");
-  } catch (err) {
-    console.log(err);
-  }
-}
-
 router.get('/', async function (req, res, next) {
   try {
     let data = await db.select(query);
@@ -30,6 +21,20 @@ router.get('/', async function (req, res, next) {
     console.log(err);
   }
 });
+
+// router.get('/inAction/:id', async function (req, res, next) {
+//   try {
+//     if(!isNaN)
+//     let data = await db.select(query);
+//     data = await Promise.all(data.map(async (activity) => {
+//       const scheduledPower = await getForce(activity.id);
+//       return { ...activity, scheduledPower }
+//     }))
+//     res.send(data);
+//   } catch (err) {
+//     console.log(err);
+//   }
+// });
 
 const getForce = async (id) => {
   const table = await db.selectWithCondition("officer_id", "activity_id", id, "activity_forces");
@@ -76,8 +81,7 @@ router.patch('/start/:id', async (req, res) => {
   if (!isNaN(req.params.id)) {
     const status = await db.selectWithCondition("id", "status_name", "'מתרחש עכשיו'", "status_types");
     const activity = await db.update({ "status": status[0].id }, ["status"], "activities", `WHERE id=${req.params.id} RETURNING *`);
-    sendEventsToAll({ ...activity[0], "status_name": "מתרחש עכשיו" });
-    // res.send({ ...activity[0], "status_name": "מתרחש עכשיו" });
+    res.send({ ...activity[0], "status_name": "מתרחש עכשיו" });
   }
   res.sendStatus(404);
 })
