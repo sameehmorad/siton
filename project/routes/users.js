@@ -21,7 +21,7 @@ router.post('/login', async (req, res, next) => {
   }
 });
 
-router.post('/login/pliceStation', async (req, res, next) => {
+router.post('/login/policeStation', async (req, res, next) => {
   const colunms = (await db.getColumns("users")).map(colunm => colunm.column_name).toString();
   const user = await db.selectWithCondition(colunms, 'user_name', "'" + req.body.userName + "'", "users");
 
