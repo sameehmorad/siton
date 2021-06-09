@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const db = require('../DBFunctions/dbFunction');
-const { clients } = require('users.js');
+const { clients } = require('./users');
 const query = `
   SELECT ac.id, ac.activity_name, at.activity_name AS activity_type, ac.activity_time, ac.activity_goal, st.status_name, ac.activity_approver, ac.lat, ac.lon
   FROM activities ac, status_types st, activity_types at
