@@ -3,11 +3,11 @@ const pgp = require('pg-promise')({
 });
 
 const cn = {
-    host: '172.30.195.209', // server name or IP address;
-    port: 5432,
-    database: 'gali',
-    user: 'gali',
-    password: 'gali'
+    host: '127.0.0.1', // server name or IP address;
+    port: 320000,
+    database: 'securitydb',
+    user: 'securityteam1',
+    password: 'sec123456'
 };
 
 // const cn = {

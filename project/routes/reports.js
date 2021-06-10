@@ -1,4 +1,3 @@
-
 const express = require('express');
 const router = express.Router();
 const db = require('../DBFunctions/dbFunction');
@@ -53,19 +52,12 @@ const getMoreDetails = async (report) => {
     return await db.selectWithCondition(colunms, 'report_id', report.id, table);
 };
 
-router.post('/', async (req, res, next) => {
-    let fields = ['event_name', 'event_description', 'event_type', 'event_time', 'report_time', 'user_name', 'lat', 'lon', 'region', 'criminal'];
-    let table = 'reports';
-    let values = fields.reduce((object, field) => ({ ...object, [field]: req.body.report[field] }), {});
+router.post('/', async (req, res) => {
+    const { ev_type, ev_time, evreporttime, reporter_id, ev_loc_x, ev_loc_y, ev_area} = res.rep;
 
-    const id = await db.insert(values, fields, table, 'RETURNING id');
-
-    table = tables[values.event_type - 1];
-    const colunms = (await db.getColumns(table)).map(colunm => colunm.column_name);
-    req.body.report["report_id"] = id[0].id;
-    values = colunms.reduce((object, field) => ({ ...object, [field]: req.body.report[field] }), {});
-
-    await db.insert(values, colunms, table);
+    db.query(`INSERT INTO report (ev_type, ev_time, evreporttime, reporter_id, ev_loc_x, ev_loc_y, ev_area)
+    VALUES('${ev_type}', '${ev_time}', '${evreporttime}', ${reporter_id}, ${ev_loc_x}, ${ev_loc_y}, '${ev_area}')`)
+    .then(result => console.log('success'));
 
     res.send();
 });
